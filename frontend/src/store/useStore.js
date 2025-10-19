@@ -53,11 +53,9 @@ export const useStore = create((set, get) => ({
   ],
 
   logs: [
-    {
-      id: 1,
-      content: "Completed morning standup",
-      timestamp: new Date().toISOString(),
-    },
+    { id: 1, content: "Completed morning standup meeting", timestamp: new Date().toISOString(), category: "work" },
+    { id: 2, content: "Finished 5km morning run", timestamp: new Date(Date.now() - 3600000).toISOString(), category: "health" },
+    { id: 3, content: "Read 2 chapters of React documentation", timestamp: new Date(Date.now() - 7200000).toISOString(), category: "learning" },
   ],
 
   setCurrentView: (view) => set({ currentView: view }),
@@ -102,10 +100,10 @@ export const useStore = create((set, get) => ({
       ),
     })),
 
-  addLog: (content) =>
+  addLog: (content, category = 'work') =>
     set((state) => ({
       logs: [
-        { id: Date.now(), content, timestamp: new Date().toISOString() },
+        { id: Date.now(), content, timestamp: new Date().toISOString(), category },
         ...state.logs,
       ],
     })),
