@@ -1,6 +1,6 @@
 import React from 'react';
 
-const TodoCard = ({ todo, onDelete, onStatusChange }) => {
+const TodoCard = ({ todo, onDelete }) => {
   const handleDragStart = (e) => {
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('todoId', todo.id);

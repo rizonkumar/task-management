@@ -10,8 +10,8 @@ const TaskDetailPage = () => {
     return null;
   }
 
-  const completedCount = selectedTask.checklist?.filter(item => item.completed).length || 0;
-  const totalCount = selectedTask.checklist?.length || 0;
+  // const completedCount = selectedTask.checklist?.filter(item => item.completed).length || 0;
+  // const totalCount = selectedTask.checklist?.length || 0;
 
   return (
     <div className="min-h-screen bg-gray-100 p-4 md:p-0">

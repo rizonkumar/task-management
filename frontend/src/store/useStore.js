@@ -8,8 +8,8 @@ export const useStore = create((set, get) => ({
   selectedTask: null,
 
   user: {
-    name: "Rizon Kumar Rahi",
-    avatar: "RKR",
+    name: "Satya",
+    avatar: "SA",
   },
 
   tasks: [
@@ -53,11 +53,34 @@ export const useStore = create((set, get) => ({
   ],
 
   logs: [
+    { id: 1, content: "Completed morning standup meeting", timestamp: new Date().toISOString(), category: "work" },
+    { id: 2, content: "Finished 5km morning run", timestamp: new Date(Date.now() - 3600000).toISOString(), category: "health" },
+    { id: 3, content: "Read 2 chapters of React documentation", timestamp: new Date(Date.now() - 7200000).toISOString(), category: "learning" },
+  ],
+
+  goals: [
     {
       id: 1,
-      content: "Completed morning standup",
-      timestamp: new Date().toISOString(),
+      title: "Drink 8 glasses of water",
+      description: "Stay hydrated throughout the day",
+      icon: "💧",
+      period: "daily",
+      reminderFrequency: "daily",
+      targetDate: new Date(Date.now() + 86400000 * 30).toISOString().split('T')[0],
+      progress: 65,
+      category: "health"
     },
+    {
+      id: 2,
+      title: "Read 3 books",
+      description: "Expand knowledge and improve focus",
+      icon: "📚",
+      period: "monthly",
+      reminderFrequency: "weekly",
+      targetDate: new Date(Date.now() + 86400000 * 60).toISOString().split('T')[0],
+      progress: 30,
+      category: "learning"
+    }
   ],
 
   setCurrentView: (view) => set({ currentView: view }),
@@ -102,10 +125,10 @@ export const useStore = create((set, get) => ({
       ),
     })),
 
-  addLog: (content) =>
+  addLog: (content, category = 'work') =>
     set((state) => ({
       logs: [
-        { id: Date.now(), content, timestamp: new Date().toISOString() },
+        { id: Date.now(), content, timestamp: new Date().toISOString(), category },
         ...state.logs,
       ],
     })),
@@ -113,6 +136,21 @@ export const useStore = create((set, get) => ({
   deleteLog: (id) =>
     set((state) => ({
       logs: state.logs.filter((l) => l.id !== id),
+    })),
+
+  addGoal: (goal) =>
+    set((state) => ({
+      goals: [...state.goals, { ...goal, id: Date.now() }],
+    })),
+
+  updateGoal: (id, updates) =>
+    set((state) => ({
+      goals: state.goals.map((g) => (g.id === id ? { ...g, ...updates } : g)),
+    })),
+
+  deleteGoal: (id) =>
+    set((state) => ({
+      goals: state.goals.filter((g) => g.id !== id),
     })),
 
   fetchTasks: async () => {
