@@ -25,4 +25,25 @@ export const logService = {
     const response = await api.delete(`/logs/${id}`);
     return response.data;
   },
+
+  // Aliases for backward compatibility
+  getAll: async (params) => {
+    const response = await api.get('/logs', { params });
+    return response.data;
+  },
+
+  getByDate: async (date) => {
+    const response = await api.get('/logs', { params: { date } });
+    return response.data;
+  },
+
+  create: async (data) => {
+    const response = await api.post('/logs', data);
+    return response.data;
+  },
+
+  delete: async (id) => {
+    const response = await api.delete(`/logs/${id}`);
+    return response.data;
+  },
 };

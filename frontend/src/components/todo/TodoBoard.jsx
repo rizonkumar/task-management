@@ -1,16 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import TodoColumn from './TodoColumn';
 import TodoForm from './TodoForm';
 import Filter from './Filter';
+import { todoService } from '../../services/todoService';
 
 const TodoBoard = () => {
-  const [todos, setTodos] = useState([
-    { id: 1, title: 'Design Sprint Checkpoint', description: 'Revamp Dashboard Cards', status: 'in-progress', dueDate: '2025-10-17' },
-    { id: 2, title: '4km jog', description: '', status: 'completed', dueDate: '2025-10-19' },
-    { id: 3, title: 'Team Handoff Prep', description: '', status: 'todo', dueDate: '2025-10-20' },
-  ]);
-  
+  const [todos, setTodos] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState({ search: '', date: null });
+
+  useEffect(() => {
+    let isMounted = true;
+    
+    const fetchData = async () => {
+      if (isMounted) {
+        await loadTodos();
+      }
+    };
+    
+    fetchData();
+    
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const loadTodos = async () => {
+    try {
+      setLoading(true);
+      const data = await todoService.getTodos();
+      setTodos(data);
+    } catch (error) {
+      console.error('Failed to load todos:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const statuses = [
     { id: 'todo', label: '📝 Todo', color: 'bg-blue-50' },
@@ -18,21 +43,38 @@ const TodoBoard = () => {
     { id: 'completed', label: '✅ Completed', color: 'bg-green-50' },
   ];
 
-  const handleAddTodo = (todo) => {
-    const newTodo = {
-      id: Math.max(...todos.map(t => t.id), 0) + 1,
-      ...todo,
-      status: 'todo',
-    };
-    setTodos([...todos, newTodo]);
+  const handleAddTodo = async (todo) => {
+    try {
+      const newTodo = await todoService.createTodo({
+        ...todo,
+        status: 'todo',
+        completed: false,
+      });
+      setTodos([...todos, newTodo]);
+    } catch (error) {
+      console.error('Failed to create todo:', error);
+      alert('Failed to create task');
+    }
   };
 
-  const handleDeleteTodo = (id) => {
-    setTodos(todos.filter(t => t.id !== id));
+  const handleDeleteTodo = async (id) => {
+    try {
+      await todoService.deleteTodo(id);
+      setTodos(todos.filter(t => t.id !== id));
+    } catch (error) {
+      console.error('Failed to delete todo:', error);
+      alert('Failed to delete task');
+    }
   };
 
-  const handleUpdateTodoStatus = (id, newStatus) => {
-    setTodos(todos.map(t => t.id === id ? { ...t, status: newStatus } : t));
+  const handleUpdateTodoStatus = async (id, newStatus) => {
+    try {
+      const updated = await todoService.updateTodo(id, { status: newStatus });
+      setTodos(todos.map(t => t.id === id ? updated : t));
+    } catch (error) {
+      console.error('Failed to update todo:', error);
+      alert('Failed to update task status');
+    }
   };
 
   const filteredTodos = todos.filter(todo => {
@@ -40,6 +82,14 @@ const TodoBoard = () => {
     const matchesDate = !filter.date || todo.dueDate === filter.date;
     return matchesSearch && matchesDate;
   });
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

@@ -10,6 +10,27 @@ const api = axios.create({
   },
 });
 
+// Track requests in development to help debug duplicate calls
+if (import.meta.env.DEV) {
+  const requestLog = new Map();
+  
+  api.interceptors.request.use(
+    (config) => {
+      const key = `${config.method} ${config.url}`;
+      const now = Date.now();
+      const lastRequest = requestLog.get(key);
+      
+      if (lastRequest && now - lastRequest < 1000) {
+        console.warn(`⚠️ Duplicate request detected within 1s: ${key}`);
+      }
+      
+      requestLog.set(key, now);
+      return config;
+    },
+    (error) => Promise.reject(error)
+  );
+}
+
 // Request interceptor
 api.interceptors.request.use(
   (config) => {

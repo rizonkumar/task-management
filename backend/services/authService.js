@@ -9,6 +9,7 @@ const {
 class AuthService {
   async registerUser(name, email, password) {
     const existingUser = await prisma.user.findUnique({ where: { email } });
+    console.log("Existing user", existingUser);
     if (existingUser) {
       throw new Error("Email already registered");
     }
@@ -28,7 +29,8 @@ class AuthService {
       },
     });
 
-    // Generate tokens
+    console.log("user", user);
+
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
 
