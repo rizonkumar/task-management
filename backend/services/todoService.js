@@ -1,20 +1,20 @@
-const prisma = require('../config/prisma');
+const prisma = require("../config/prisma");
 
 class TodoService {
   async getTodos(userId) {
     return await prisma.todo.findMany({
       where: { userId },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: "desc" },
     });
   }
 
   async getTodo(id, userId) {
     const todo = await prisma.todo.findFirst({
-      where: { id, userId }
+      where: { id, userId },
     });
 
     if (!todo) {
-      throw new Error('Todo not found');
+      throw new Error("Todo not found");
     }
 
     return todo;
@@ -27,22 +27,21 @@ class TodoService {
       data: {
         title,
         description,
-        priority: priority || 'medium',
+        priority: priority || "medium",
         dueDate: dueDate ? new Date(dueDate) : null,
         category,
-        userId
-      }
+        userId,
+      },
     });
   }
 
   async updateTodo(id, userId, data) {
-    // Check if todo exists and belongs to user
     const existingTodo = await prisma.todo.findFirst({
-      where: { id, userId }
+      where: { id, userId },
     });
 
     if (!existingTodo) {
-      throw new Error('Todo not found');
+      throw new Error("Todo not found");
     }
 
     const { title, description, priority, dueDate, category, completed } = data;
@@ -55,18 +54,18 @@ class TodoService {
         priority,
         dueDate: dueDate ? new Date(dueDate) : null,
         category,
-        completed
-      }
+        completed,
+      },
     });
   }
 
   async deleteTodo(id, userId) {
     const existingTodo = await prisma.todo.findFirst({
-      where: { id, userId }
+      where: { id, userId },
     });
 
     if (!existingTodo) {
-      throw new Error('Todo not found');
+      throw new Error("Todo not found");
     }
 
     await prisma.todo.delete({ where: { id } });
@@ -74,16 +73,16 @@ class TodoService {
 
   async toggleTodo(id, userId) {
     const existingTodo = await prisma.todo.findFirst({
-      where: { id, userId }
+      where: { id, userId },
     });
 
     if (!existingTodo) {
-      throw new Error('Todo not found');
+      throw new Error("Todo not found");
     }
 
     return await prisma.todo.update({
       where: { id },
-      data: { completed: !existingTodo.completed }
+      data: { completed: !existingTodo.completed },
     });
   }
 }

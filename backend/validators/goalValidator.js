@@ -1,9 +1,11 @@
-const { body, validationResult } = require('express-validator');
+const { body, validationResult } = require("express-validator");
 
 const validateGoal = [
-  body('title').trim().notEmpty().withMessage('Title is required'),
-  body('period').isIn(['daily', 'weekly', 'monthly', 'yearly', 'custom']).withMessage('Invalid period'),
-  body('target').optional().isNumeric().withMessage('Target must be a number')
+  body("title").trim().notEmpty().withMessage("Title is required"),
+  body("period")
+    .isIn(["daily", "weekly", "monthly", "yearly", "custom"])
+    .withMessage("Invalid period"),
+  body("target").optional().isNumeric().withMessage("Target must be a number"),
 ];
 
 const handleValidationErrors = (req, res, next) => {
@@ -16,5 +18,5 @@ const handleValidationErrors = (req, res, next) => {
 
 module.exports = {
   validateGoal,
-  handleValidationErrors
+  handleValidationErrors,
 };

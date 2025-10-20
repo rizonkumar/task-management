@@ -1,4 +1,4 @@
-const prisma = require('../config/prisma');
+const prisma = require("../config/prisma");
 
 class GoalService {
   async getGoals(userId, filters = {}) {
@@ -16,24 +16,33 @@ class GoalService {
 
     return await prisma.goal.findMany({
       where,
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: "desc" },
     });
   }
 
   async getGoal(id, userId) {
     const goal = await prisma.goal.findFirst({
-      where: { id, userId }
+      where: { id, userId },
     });
 
     if (!goal) {
-      throw new Error('Goal not found');
+      throw new Error("Goal not found");
     }
 
     return goal;
   }
 
   async createGoal(userId, data) {
-    const { title, description, period, target, current, category, startDate, endDate } = data;
+    const {
+      title,
+      description,
+      period,
+      target,
+      current,
+      category,
+      startDate,
+      endDate,
+    } = data;
 
     return await prisma.goal.create({
       data: {
@@ -45,21 +54,31 @@ class GoalService {
         category,
         startDate: startDate ? new Date(startDate) : new Date(),
         endDate: endDate ? new Date(endDate) : null,
-        userId
-      }
+        userId,
+      },
     });
   }
 
   async updateGoal(id, userId, data) {
     const existingGoal = await prisma.goal.findFirst({
-      where: { id, userId }
+      where: { id, userId },
     });
 
     if (!existingGoal) {
-      throw new Error('Goal not found');
+      throw new Error("Goal not found");
     }
 
-    const { title, description, period, target, current, category, startDate, endDate, completed } = data;
+    const {
+      title,
+      description,
+      period,
+      target,
+      current,
+      category,
+      startDate,
+      endDate,
+      completed,
+    } = data;
 
     return await prisma.goal.update({
       where: { id },
@@ -72,18 +91,18 @@ class GoalService {
         category,
         startDate: startDate ? new Date(startDate) : undefined,
         endDate: endDate ? new Date(endDate) : undefined,
-        completed
-      }
+        completed,
+      },
     });
   }
 
   async deleteGoal(id, userId) {
     const existingGoal = await prisma.goal.findFirst({
-      where: { id, userId }
+      where: { id, userId },
     });
 
     if (!existingGoal) {
-      throw new Error('Goal not found');
+      throw new Error("Goal not found");
     }
 
     await prisma.goal.delete({ where: { id } });
@@ -91,19 +110,19 @@ class GoalService {
 
   async updateProgress(id, userId, current) {
     const existingGoal = await prisma.goal.findFirst({
-      where: { id, userId }
+      where: { id, userId },
     });
 
     if (!existingGoal) {
-      throw new Error('Goal not found');
+      throw new Error("Goal not found");
     }
 
     return await prisma.goal.update({
       where: { id },
       data: {
         current,
-        completed: current >= existingGoal.target
-      }
+        completed: current >= existingGoal.target,
+      },
     });
   }
 }

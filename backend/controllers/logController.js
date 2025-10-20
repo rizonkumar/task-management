@@ -1,4 +1,4 @@
-const logService = require('../services/logService');
+const logService = require("../services/logService");
 
 exports.getLogs = async (req, res) => {
   try {
@@ -29,7 +29,11 @@ exports.createLog = async (req, res) => {
 
 exports.updateLog = async (req, res) => {
   try {
-    const log = await logService.updateLog(req.params.id, req.user.id, req.body);
+    const log = await logService.updateLog(
+      req.params.id,
+      req.user.id,
+      req.body
+    );
     res.json(log);
   } catch (error) {
     res.status(404).json({ error: error.message });
@@ -39,7 +43,7 @@ exports.updateLog = async (req, res) => {
 exports.deleteLog = async (req, res) => {
   try {
     await logService.deleteLog(req.params.id, req.user.id);
-    res.json({ message: 'Log deleted successfully' });
+    res.json({ message: "Log deleted successfully" });
   } catch (error) {
     res.status(404).json({ error: error.message });
   }

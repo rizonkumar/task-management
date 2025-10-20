@@ -1,4 +1,4 @@
-const todoService = require('../services/todoService');
+const todoService = require("../services/todoService");
 
 exports.getTodos = async (req, res) => {
   try {
@@ -29,7 +29,11 @@ exports.createTodo = async (req, res) => {
 
 exports.updateTodo = async (req, res) => {
   try {
-    const todo = await todoService.updateTodo(req.params.id, req.user.id, req.body);
+    const todo = await todoService.updateTodo(
+      req.params.id,
+      req.user.id,
+      req.body
+    );
     res.json(todo);
   } catch (error) {
     res.status(404).json({ error: error.message });
@@ -39,7 +43,7 @@ exports.updateTodo = async (req, res) => {
 exports.deleteTodo = async (req, res) => {
   try {
     await todoService.deleteTodo(req.params.id, req.user.id);
-    res.json({ message: 'Todo deleted successfully' });
+    res.json({ message: "Todo deleted successfully" });
   } catch (error) {
     res.status(404).json({ error: error.message });
   }

@@ -22,7 +22,6 @@ const generateRefreshToken = (user) => {
   );
 };
 
-// Verify access token
 const verifyAccessToken = (token) => {
   try {
     return jwt.verify(token, process.env.JWT_ACCESS_SECRET);
@@ -31,7 +30,6 @@ const verifyAccessToken = (token) => {
   }
 };
 
-// Verify refresh token
 const verifyRefreshToken = (token) => {
   try {
     return jwt.verify(token, process.env.JWT_REFRESH_SECRET);

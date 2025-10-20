@@ -1,39 +1,43 @@
-const bcrypt = require('bcryptjs');
-const prisma = require('../config/prisma');
-const { generateAccessToken, generateRefreshToken, verifyRefreshToken } = require('../utils/jwt');
+const bcrypt = require("bcryptjs");
+const prisma = require("../config/prisma");
+const {
+  generateAccessToken,
+  generateRefreshToken,
+  verifyRefreshToken,
+} = require("../utils/jwt");
 
 class AuthService {
   async registerUser(name, email, password) {
-    // Check if user exists
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
-      throw new Error('Email already registered');
+      throw new Error("Email already registered");
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create user
     const user = await prisma.user.create({
       data: {
         name,
         email,
         password: hashedPassword,
-        avatar: name.split(' ').map(n => n[0]).join('').toUpperCase()
-      }
+        avatar: name
+          .split(" ")
+          .map((n) => n[0])
+          .join("")
+          .toUpperCase(),
+      },
     });
 
     // Generate tokens
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
 
-    // Store refresh token in DB
     await prisma.refreshToken.create({
       data: {
         token: refreshToken,
         userId: user.id,
-        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-      }
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      },
     });
 
     return {
@@ -41,37 +45,33 @@ class AuthService {
         id: user.id,
         name: user.name,
         email: user.email,
-        avatar: user.avatar
+        avatar: user.avatar,
       },
       accessToken,
-      refreshToken
+      refreshToken,
     };
   }
 
   async loginUser(email, password) {
-    // Find user
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
-      throw new Error('Invalid credentials');
+      throw new Error("Invalid credentials");
     }
 
-    // Verify password
     const isValid = await bcrypt.compare(password, user.password);
     if (!isValid) {
-      throw new Error('Invalid credentials');
+      throw new Error("Invalid credentials");
     }
 
-    // Generate tokens
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
 
-    // Store refresh token
     await prisma.refreshToken.create({
       data: {
         token: refreshToken,
         userId: user.id,
-        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-      }
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      },
     });
 
     return {
@@ -79,36 +79,32 @@ class AuthService {
         id: user.id,
         name: user.name,
         email: user.email,
-        avatar: user.avatar
+        avatar: user.avatar,
       },
       accessToken,
-      refreshToken
+      refreshToken,
     };
   }
 
   async refreshUserToken(refreshToken) {
     if (!refreshToken) {
-      throw new Error('Refresh token required');
+      throw new Error("Refresh token required");
     }
 
-    // Verify refresh token
     const decoded = verifyRefreshToken(refreshToken);
 
-    // Check if token exists in DB
     const tokenRecord = await prisma.refreshToken.findUnique({
-      where: { token: refreshToken }
+      where: { token: refreshToken },
     });
 
     if (!tokenRecord || tokenRecord.expiresAt < new Date()) {
-      throw new Error('Invalid or expired refresh token');
+      throw new Error("Invalid or expired refresh token");
     }
 
-    // Get user
     const user = await prisma.user.findUnique({
-      where: { id: decoded.id }
+      where: { id: decoded.id },
     });
 
-    // Generate new access token
     const newAccessToken = generateAccessToken(user);
 
     return { accessToken: newAccessToken };
@@ -117,7 +113,7 @@ class AuthService {
   async logoutUser(refreshToken) {
     if (refreshToken) {
       await prisma.refreshToken.deleteMany({
-        where: { token: refreshToken }
+        where: { token: refreshToken },
       });
     }
   }

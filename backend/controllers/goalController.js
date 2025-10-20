@@ -1,4 +1,4 @@
-const goalService = require('../services/goalService');
+const goalService = require("../services/goalService");
 
 exports.getGoals = async (req, res) => {
   try {
@@ -29,7 +29,11 @@ exports.createGoal = async (req, res) => {
 
 exports.updateGoal = async (req, res) => {
   try {
-    const goal = await goalService.updateGoal(req.params.id, req.user.id, req.body);
+    const goal = await goalService.updateGoal(
+      req.params.id,
+      req.user.id,
+      req.body
+    );
     res.json(goal);
   } catch (error) {
     res.status(404).json({ error: error.message });
@@ -39,7 +43,7 @@ exports.updateGoal = async (req, res) => {
 exports.deleteGoal = async (req, res) => {
   try {
     await goalService.deleteGoal(req.params.id, req.user.id);
-    res.json({ message: 'Goal deleted successfully' });
+    res.json({ message: "Goal deleted successfully" });
   } catch (error) {
     res.status(404).json({ error: error.message });
   }
@@ -48,7 +52,11 @@ exports.deleteGoal = async (req, res) => {
 exports.updateProgress = async (req, res) => {
   try {
     const { current } = req.body;
-    const goal = await goalService.updateProgress(req.params.id, req.user.id, current);
+    const goal = await goalService.updateProgress(
+      req.params.id,
+      req.user.id,
+      current
+    );
     res.json(goal);
   } catch (error) {
     res.status(404).json({ error: error.message });

@@ -1,8 +1,8 @@
-const { body, validationResult } = require('express-validator');
+const { body, validationResult } = require("express-validator");
 
 const validateLog = [
-  body('title').trim().notEmpty().withMessage('Title is required'),
-  body('category').trim().notEmpty().withMessage('Category is required')
+  body("title").trim().notEmpty().withMessage("Title is required"),
+  body("category").trim().notEmpty().withMessage("Category is required"),
 ];
 
 const handleValidationErrors = (req, res, next) => {
@@ -15,5 +15,5 @@ const handleValidationErrors = (req, res, next) => {
 
 module.exports = {
   validateLog,
-  handleValidationErrors
+  handleValidationErrors,
 };

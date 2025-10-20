@@ -1,4 +1,4 @@
-const prisma = require('../config/prisma');
+const prisma = require("../config/prisma");
 
 class LogService {
   async getLogs(userId, filters = {}) {
@@ -18,17 +18,17 @@ class LogService {
 
     return await prisma.log.findMany({
       where,
-      orderBy: { timestamp: 'desc' }
+      orderBy: { timestamp: "desc" },
     });
   }
 
   async getLog(id, userId) {
     const log = await prisma.log.findFirst({
-      where: { id, userId }
+      where: { id, userId },
     });
 
     if (!log) {
-      throw new Error('Log not found');
+      throw new Error("Log not found");
     }
 
     return log;
@@ -43,18 +43,18 @@ class LogService {
         description,
         category,
         timestamp: timestamp ? new Date(timestamp) : new Date(),
-        userId
-      }
+        userId,
+      },
     });
   }
 
   async updateLog(id, userId, data) {
     const existingLog = await prisma.log.findFirst({
-      where: { id, userId }
+      where: { id, userId },
     });
 
     if (!existingLog) {
-      throw new Error('Log not found');
+      throw new Error("Log not found");
     }
 
     const { title, description, category, timestamp } = data;
@@ -65,18 +65,18 @@ class LogService {
         title,
         description,
         category,
-        timestamp: timestamp ? new Date(timestamp) : undefined
-      }
+        timestamp: timestamp ? new Date(timestamp) : undefined,
+      },
     });
   }
 
   async deleteLog(id, userId) {
     const existingLog = await prisma.log.findFirst({
-      where: { id, userId }
+      where: { id, userId },
     });
 
     if (!existingLog) {
-      throw new Error('Log not found');
+      throw new Error("Log not found");
     }
 
     await prisma.log.delete({ where: { id } });

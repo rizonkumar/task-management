@@ -1,8 +1,11 @@
-const { body, validationResult } = require('express-validator');
+const { body, validationResult } = require("express-validator");
 
 const validateTodo = [
-  body('title').trim().notEmpty().withMessage('Title is required'),
-  body('priority').optional().isIn(['low', 'medium', 'high']).withMessage('Invalid priority')
+  body("title").trim().notEmpty().withMessage("Title is required"),
+  body("priority")
+    .optional()
+    .isIn(["low", "medium", "high"])
+    .withMessage("Invalid priority"),
 ];
 
 const handleValidationErrors = (req, res, next) => {
@@ -15,5 +18,5 @@ const handleValidationErrors = (req, res, next) => {
 
 module.exports = {
   validateTodo,
-  handleValidationErrors
+  handleValidationErrors,
 };
