@@ -1,64 +1,65 @@
-import React, { useState } from 'react';
-import { 
-  ArrowLeft, 
-  User, 
-  Mail, 
-  Lock, 
-  Bell, 
-  Moon, 
-  Globe, 
-  Shield, 
-  HelpCircle, 
+import React, { useState } from "react";
+import {
+  ArrowLeft,
+  User,
+  Mail,
+  Lock,
+  Bell,
+  Moon,
+  Globe,
+  Shield,
+  HelpCircle,
   LogOut,
   Camera,
   Save,
-  X
-} from 'lucide-react';
-import { useStore } from '../store/useStore';
+  X,
+} from "lucide-react";
+import { useStore } from "../store/useStore";
 
 const SettingsPage = () => {
   const { user, setCurrentView } = useStore();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     name: user.name,
-    email: 'rizon@example.com',
+    email: "rizon@example.com",
     avatar: user.avatar,
   });
 
   const [settings, setSettings] = useState({
     notifications: true,
     darkMode: false,
-    language: 'en',
+    language: "en",
     emailNotifications: true,
     pushNotifications: false,
   });
 
   const handleSaveProfile = () => {
-    // Update user in store
     setIsEditing(false);
   };
 
   const handleLogout = () => {
-    if (window.confirm('Are you sure you want to logout?')) {
-      // Logout logic here
-      setCurrentView('home');
+    if (window.confirm("Are you sure you want to logout?")) {
+      setCurrentView("home");
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-100 p-4 md:p-0">
-      {/* Header */}
       <div className="flex items-center justify-between mb-6 md:mb-8">
         <div className="flex items-center gap-3">
-          <button 
-            onClick={() => setCurrentView('home')}
+          <button
+            onClick={() => setCurrentView("home")}
             className="md:hidden w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm"
           >
             <ArrowLeft size={20} className="text-gray-600" />
           </button>
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Settings</h1>
-            <p className="text-sm text-gray-500 mt-1">Manage your account and preferences</p>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+              Settings
+            </h1>
+            <p className="text-sm text-gray-500 mt-1">
+              Manage your account and preferences
+            </p>
           </div>
         </div>
       </div>
@@ -87,7 +88,11 @@ const SettingsPage = () => {
                 <button
                   onClick={() => {
                     setIsEditing(false);
-                    setFormData({ name: user.name, email: 'rizon@example.com', avatar: user.avatar });
+                    setFormData({
+                      name: user?.name || "",
+                      email: user?.email || "",
+                      avatar: user?.avatar || "",
+                    });
                   }}
                   className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors"
                 >
@@ -123,12 +128,14 @@ const SettingsPage = () => {
                 <input
                   type="text"
                   value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
                   disabled={!isEditing}
                   className={`w-full px-4 py-3 rounded-xl border ${
-                    isEditing 
-                      ? 'border-gray-300 focus:ring-2 focus:ring-red-500 outline-none' 
-                      : 'border-gray-200 bg-gray-50'
+                    isEditing
+                      ? "border-gray-300 focus:ring-2 focus:ring-red-500 outline-none"
+                      : "border-gray-200 bg-gray-50"
                   }`}
                 />
               </div>
@@ -141,12 +148,14 @@ const SettingsPage = () => {
                 <input
                   type="email"
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
                   disabled={!isEditing}
                   className={`w-full px-4 py-3 rounded-xl border ${
-                    isEditing 
-                      ? 'border-gray-300 focus:ring-2 focus:ring-red-500 outline-none' 
-                      : 'border-gray-200 bg-gray-50'
+                    isEditing
+                      ? "border-gray-300 focus:ring-2 focus:ring-red-500 outline-none"
+                      : "border-gray-200 bg-gray-50"
                   }`}
                 />
               </div>
@@ -171,18 +180,27 @@ const SettingsPage = () => {
                 <Bell size={20} className="text-gray-600" />
                 <div>
                   <p className="font-medium text-gray-900">Notifications</p>
-                  <p className="text-sm text-gray-500">Receive app notifications</p>
+                  <p className="text-sm text-gray-500">
+                    Receive app notifications
+                  </p>
                 </div>
               </div>
               <button
-                onClick={() => setSettings({ ...settings, notifications: !settings.notifications })}
+                onClick={() =>
+                  setSettings({
+                    ...settings,
+                    notifications: !settings.notifications,
+                  })
+                }
                 className={`w-12 h-7 rounded-full transition-colors relative ${
-                  settings.notifications ? 'bg-red-500' : 'bg-gray-300'
+                  settings.notifications ? "bg-red-500" : "bg-gray-300"
                 }`}
               >
-                <div className={`absolute top-1 w-5 h-5 bg-white rounded-full transition-transform ${
-                  settings.notifications ? 'right-1' : 'left-1'
-                }`} />
+                <div
+                  className={`absolute top-1 w-5 h-5 bg-white rounded-full transition-transform ${
+                    settings.notifications ? "right-1" : "left-1"
+                  }`}
+                />
               </button>
             </div>
 
@@ -196,14 +214,18 @@ const SettingsPage = () => {
                 </div>
               </div>
               <button
-                onClick={() => setSettings({ ...settings, darkMode: !settings.darkMode })}
+                onClick={() =>
+                  setSettings({ ...settings, darkMode: !settings.darkMode })
+                }
                 className={`w-12 h-7 rounded-full transition-colors relative ${
-                  settings.darkMode ? 'bg-red-500' : 'bg-gray-300'
+                  settings.darkMode ? "bg-red-500" : "bg-gray-300"
                 }`}
               >
-                <div className={`absolute top-1 w-5 h-5 bg-white rounded-full transition-transform ${
-                  settings.darkMode ? 'right-1' : 'left-1'
-                }`} />
+                <div
+                  className={`absolute top-1 w-5 h-5 bg-white rounded-full transition-transform ${
+                    settings.darkMode ? "right-1" : "left-1"
+                  }`}
+                />
               </button>
             </div>
 
@@ -225,7 +247,9 @@ const SettingsPage = () => {
 
         {/* Notification Settings */}
         <div className="bg-white rounded-2xl p-6 shadow-sm">
-          <h2 className="text-lg font-bold text-gray-900 mb-4">Notification Settings</h2>
+          <h2 className="text-lg font-bold text-gray-900 mb-4">
+            Notification Settings
+          </h2>
           <div className="space-y-4">
             <div className="flex items-center justify-between py-3 border-b border-gray-100">
               <div>
@@ -233,14 +257,21 @@ const SettingsPage = () => {
                 <p className="text-sm text-gray-500">Get updates via email</p>
               </div>
               <button
-                onClick={() => setSettings({ ...settings, emailNotifications: !settings.emailNotifications })}
+                onClick={() =>
+                  setSettings({
+                    ...settings,
+                    emailNotifications: !settings.emailNotifications,
+                  })
+                }
                 className={`w-12 h-7 rounded-full transition-colors relative ${
-                  settings.emailNotifications ? 'bg-red-500' : 'bg-gray-300'
+                  settings.emailNotifications ? "bg-red-500" : "bg-gray-300"
                 }`}
               >
-                <div className={`absolute top-1 w-5 h-5 bg-white rounded-full transition-transform ${
-                  settings.emailNotifications ? 'right-1' : 'left-1'
-                }`} />
+                <div
+                  className={`absolute top-1 w-5 h-5 bg-white rounded-full transition-transform ${
+                    settings.emailNotifications ? "right-1" : "left-1"
+                  }`}
+                />
               </button>
             </div>
 
@@ -250,14 +281,21 @@ const SettingsPage = () => {
                 <p className="text-sm text-gray-500">Browser notifications</p>
               </div>
               <button
-                onClick={() => setSettings({ ...settings, pushNotifications: !settings.pushNotifications })}
+                onClick={() =>
+                  setSettings({
+                    ...settings,
+                    pushNotifications: !settings.pushNotifications,
+                  })
+                }
                 className={`w-12 h-7 rounded-full transition-colors relative ${
-                  settings.pushNotifications ? 'bg-red-500' : 'bg-gray-300'
+                  settings.pushNotifications ? "bg-red-500" : "bg-gray-300"
                 }`}
               >
-                <div className={`absolute top-1 w-5 h-5 bg-white rounded-full transition-transform ${
-                  settings.pushNotifications ? 'right-1' : 'left-1'
-                }`} />
+                <div
+                  className={`absolute top-1 w-5 h-5 bg-white rounded-full transition-transform ${
+                    settings.pushNotifications ? "right-1" : "left-1"
+                  }`}
+                />
               </button>
             </div>
           </div>
@@ -265,7 +303,9 @@ const SettingsPage = () => {
 
         {/* Support & About */}
         <div className="bg-white rounded-2xl p-6 shadow-sm">
-          <h2 className="text-lg font-bold text-gray-900 mb-4">Support & About</h2>
+          <h2 className="text-lg font-bold text-gray-900 mb-4">
+            Support & About
+          </h2>
           <div className="space-y-3">
             <button className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 rounded-xl transition-colors text-left">
               <HelpCircle size={20} className="text-gray-600" />
@@ -282,12 +322,17 @@ const SettingsPage = () => {
         <div className="bg-white rounded-2xl p-6 shadow-sm border-2 border-red-100">
           <h2 className="text-lg font-bold text-red-600 mb-4">Danger Zone</h2>
           <div className="space-y-3">
-            <button 
+            <button
               onClick={handleLogout}
               className="w-full flex items-center gap-3 px-4 py-3 bg-gray-50 hover:bg-red-50 rounded-xl transition-colors text-left group"
             >
-              <LogOut size={20} className="text-gray-600 group-hover:text-red-500" />
-              <span className="font-medium text-gray-900 group-hover:text-red-600">Logout</span>
+              <LogOut
+                size={20}
+                className="text-gray-600 group-hover:text-red-500"
+              />
+              <span className="font-medium text-gray-900 group-hover:text-red-600">
+                Logout
+              </span>
             </button>
             <button className="w-full flex items-center gap-3 px-4 py-3 bg-red-50 hover:bg-red-100 rounded-xl transition-colors text-left">
               <X size={20} className="text-red-500" />

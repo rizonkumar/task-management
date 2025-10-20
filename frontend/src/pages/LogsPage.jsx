@@ -6,7 +6,7 @@ const LogsPage = () => {
   const { logs, addLog, deleteLog, setCurrentView } = useStore();
   const [showAddForm, setShowAddForm] = useState(false);
   const [newLog, setNewLog] = useState('');
-  const [selectedDate, setSelectedDate] = useState('all');
+  // const [selectedDate, setSelectedDate] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
 
@@ -33,13 +33,13 @@ const LogsPage = () => {
     });
   };
 
-  const formatDate = (timestamp) => {
-    return new Date(timestamp).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
-  };
+  // const formatDate = (timestamp) => {
+  //   return new Date(timestamp).toLocaleDateString('en-US', {
+  //     month: 'short',
+  //     day: 'numeric',
+  //     year: 'numeric',
+  //   });
+  // };
 
   const groupLogsByDate = (logs) => {
     const grouped = {};
@@ -62,6 +62,8 @@ const LogsPage = () => {
 
   const groupedLogs = groupLogsByDate(filteredLogs);
   const dates = Object.keys(groupedLogs).sort((a, b) => new Date(b) - new Date(a));
+
+  // Loading state removed - using store data directly
 
   return (
     <div className="min-h-screen bg-gray-100 p-4 md:p-0">
