@@ -3,6 +3,7 @@ const authService = require("../services/authService");
 exports.register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
+    console.log("Name email", name, email, password);
     const result = await authService.registerUser(name, email, password);
 
     res.cookie("accessToken", result.accessToken, {
