@@ -3,13 +3,13 @@ import axios from "axios";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
-export const useStore = create((set, get) => ({
+export const useStore = create((set) => ({
   currentView: "home",
   selectedTask: null,
 
   user: {
-    name: "Satya",
-    avatar: "SA",
+    name: "Rizon Kumar Rahi",
+    avatar: "RKR",
   },
 
   tasks: [
@@ -53,9 +53,24 @@ export const useStore = create((set, get) => ({
   ],
 
   logs: [
-    { id: 1, content: "Completed morning standup meeting", timestamp: new Date().toISOString(), category: "work" },
-    { id: 2, content: "Finished 5km morning run", timestamp: new Date(Date.now() - 3600000).toISOString(), category: "health" },
-    { id: 3, content: "Read 2 chapters of React documentation", timestamp: new Date(Date.now() - 7200000).toISOString(), category: "learning" },
+    {
+      id: 1,
+      content: "Completed morning standup meeting",
+      timestamp: new Date().toISOString(),
+      category: "work",
+    },
+    {
+      id: 2,
+      content: "Finished 5km morning run",
+      timestamp: new Date(Date.now() - 3600000).toISOString(),
+      category: "health",
+    },
+    {
+      id: 3,
+      content: "Read 2 chapters of React documentation",
+      timestamp: new Date(Date.now() - 7200000).toISOString(),
+      category: "learning",
+    },
   ],
 
   goals: [
@@ -63,24 +78,28 @@ export const useStore = create((set, get) => ({
       id: 1,
       title: "Drink 8 glasses of water",
       description: "Stay hydrated throughout the day",
-      icon: "💧",
+      icon: "Heart",
       period: "daily",
       reminderFrequency: "daily",
-      targetDate: new Date(Date.now() + 86400000 * 30).toISOString().split('T')[0],
+      targetDate: new Date(Date.now() + 86400000 * 30)
+        .toISOString()
+        .split("T")[0],
       progress: 65,
-      category: "health"
+      category: "health",
     },
     {
       id: 2,
       title: "Read 3 books",
       description: "Expand knowledge and improve focus",
-      icon: "📚",
+      icon: "BookOpen",
       period: "monthly",
       reminderFrequency: "weekly",
-      targetDate: new Date(Date.now() + 86400000 * 60).toISOString().split('T')[0],
+      targetDate: new Date(Date.now() + 86400000 * 60)
+        .toISOString()
+        .split("T")[0],
       progress: 30,
-      category: "learning"
-    }
+      category: "learning",
+    },
   ],
 
   setCurrentView: (view) => set({ currentView: view }),
@@ -125,10 +144,15 @@ export const useStore = create((set, get) => ({
       ),
     })),
 
-  addLog: (content, category = 'work') =>
+  addLog: (content, category = "work") =>
     set((state) => ({
       logs: [
-        { id: Date.now(), content, timestamp: new Date().toISOString(), category },
+        {
+          id: Date.now(),
+          content,
+          timestamp: new Date().toISOString(),
+          category,
+        },
         ...state.logs,
       ],
     })),
