@@ -5,6 +5,7 @@ import HomePage from './pages/HomePage';
 import TaskDetailPage from './pages/TaskDetailPage';
 import TaskFormPage from './pages/TaskFormPage';
 import LogsPage from './pages/LogsPage';
+import GoalsPage from './pages/GoalsPage';
 import SettingsPage from './pages/SettingsPage';
 import BottomNav from './components/common/BottomNav';
 import Sidebar from './components/common/Sidebar';
@@ -20,6 +21,7 @@ function App() {
           {currentView === 'task-detail' && <TaskDetailPage />}
           {currentView === 'task-form' && <TaskFormPage />}
           {currentView === 'logs' && <LogsPage />}
+          {currentView === 'goals' && <GoalsPage />}
           {currentView === 'settings' && <SettingsPage />}
         </main>
         <BottomNav />
@@ -33,6 +35,7 @@ function App() {
             {currentView === 'task-detail' && <TaskDetailPage />}
             {currentView === 'task-form' && <TaskFormPage />}
             {currentView === 'logs' && <LogsPage />}
+            {currentView === 'goals' && <GoalsPage />}
             {currentView === 'settings' && <SettingsPage />}
           </div>
         </main>
