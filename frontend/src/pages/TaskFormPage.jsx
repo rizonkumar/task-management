@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { ArrowLeft, Bookmark, ChevronDown } from "lucide-react";
-import { useStore } from "../store/useStore";
+import { useNavigate } from "react-router-dom";
+import { todoService } from "../services/todoService";
 
 const TaskFormPage = () => {
-  const { setCurrentView, addTask } = useStore();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -14,18 +15,24 @@ const TaskFormPage = () => {
     reminderEnabled: false,
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    addTask({
-      title: formData.title || "New Task",
-      description: formData.description,
-      icon: "FileText",
-      status: "todo",
-      dueDate: new Date().toISOString().split("T")[0],
-      dueTime: formData.timeEnabled ? formData.time : "",
-      priority: formData.priority.toLowerCase(),
-    });
-    setCurrentView("home");
+    try {
+      await todoService.createTodo({
+        title: formData.title || "New Task",
+        description: formData.description,
+        icon: "FileText",
+        status: "todo",
+        completed: false,
+        dueDate: new Date().toISOString().split("T")[0],
+        dueTime: formData.timeEnabled ? formData.time : "",
+        priority: formData.priority.toLowerCase(),
+      });
+      navigate('/');
+    } catch (error) {
+      console.error('Failed to create task:', error);
+      alert('Failed to create task');
+    }
   };
 
   return (
@@ -34,7 +41,7 @@ const TaskFormPage = () => {
         {/* Header */}
         <div className="flex items-center justify-between mb-6 md:mb-8">
           <button
-            onClick={() => setCurrentView("home")}
+            onClick={() => navigate('/')}
             className="w-10 h-10 md:w-12 md:h-12 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-gray-50 transition-colors"
           >
             <ArrowLeft size={20} className="text-gray-600" />

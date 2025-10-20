@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   ArrowLeft,
   Plus,
@@ -7,15 +7,45 @@ import {
   Calendar as CalendarIcon,
   Trash2,
 } from "lucide-react";
-import { useStore } from "../store/useStore";
+import { useNavigate } from "react-router-dom";
+import { logService } from "../services/logService";
 
 const LogsPage = () => {
-  const { logs, addLog, deleteLog, setCurrentView } = useStore();
+  const navigate = useNavigate();
+  const [logs, setLogs] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
   const [newLog, setNewLog] = useState("");
-  // const [selectedDate, setSelectedDate] = useState('all');
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
+
+  useEffect(() => {
+    let isMounted = true;
+    
+    const fetchData = async () => {
+      if (isMounted) {
+        await loadLogs();
+      }
+    };
+    
+    fetchData();
+    
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const loadLogs = async () => {
+    try {
+      setLoading(true);
+      const data = await logService.getLogs();
+      setLogs(data);
+    } catch (error) {
+      console.error('Failed to load logs:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const categories = [
     { id: "all", label: "All", color: "gray", icon: "📋" },
@@ -25,11 +55,33 @@ const LogsPage = () => {
     { id: "learning", label: "Learning", color: "purple", icon: "📚" },
   ];
 
-  const handleAddLog = (category = "work") => {
+  const handleAddLog = async (category = "work") => {
     if (newLog.trim()) {
-      addLog(newLog, category);
-      setNewLog("");
-      setShowAddForm(false);
+      try {
+        const newLogData = await logService.createLog({
+          content: newLog,
+          category,
+          timestamp: new Date().toISOString(),
+        });
+        setLogs([newLogData, ...logs]);
+        setNewLog("");
+        setShowAddForm(false);
+      } catch (error) {
+        console.error('Failed to create log:', error);
+        alert('Failed to create log');
+      }
+    }
+  };
+
+  const handleDeleteLog = async (id) => {
+    if (window.confirm("Delete this log?")) {
+      try {
+        await logService.deleteLog(id);
+        setLogs(logs.filter((l) => l.id !== id));
+      } catch (error) {
+        console.error('Failed to delete log:', error);
+        alert('Failed to delete log');
+      }
     }
   };
 
@@ -75,7 +127,13 @@ const LogsPage = () => {
     (a, b) => new Date(b) - new Date(a)
   );
 
-  // Loading state removed - using store data directly
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-0">
@@ -83,7 +141,7 @@ const LogsPage = () => {
       <div className="flex items-center justify-between mb-6 md:mb-8">
         <div className="md:hidden">
           <button
-            onClick={() => setCurrentView("home")}
+            onClick={() => navigate('/')}
             className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm"
           >
             <ArrowLeft size={20} className="text-gray-600" />
@@ -227,11 +285,7 @@ const LogsPage = () => {
                         </div>
                       </div>
                       <button
-                        onClick={() => {
-                          if (window.confirm("Delete this log?")) {
-                            deleteLog(log.id);
-                          }
-                        }}
+                        onClick={() => handleDeleteLog(log.id)}
                         className="opacity-0 group-hover:opacity-100 p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
                       >
                         <Trash2 size={16} />

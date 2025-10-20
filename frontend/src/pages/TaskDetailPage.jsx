@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   ArrowLeft,
   Edit2,
@@ -7,19 +7,68 @@ import {
   Pause,
   AlertCircle,
 } from "lucide-react";
-import { useStore } from "../store/useStore";
+import { useParams, useNavigate } from "react-router-dom";
+import { todoService } from "../services/todoService";
 import { TaskIcon } from "../utils/iconMap";
 
 const TaskDetailPage = () => {
-  const {
-    selectedTask,
-    setCurrentView,
-    toggleChecklistItem,
-    markTaskComplete,
-  } = useStore();
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [task, setTask] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  if (!selectedTask) {
-    return null;
+  useEffect(() => {
+    loadTask();
+  }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const loadTask = async () => {
+    try {
+      setLoading(true);
+      const data = await todoService.getTodo(id);
+      setTask(data);
+    } catch (error) {
+      console.error('Failed to load task:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (window.confirm("Delete this task?")) {
+      try {
+        await todoService.deleteTodo(id);
+        navigate('/');
+      } catch (error) {
+        console.error('Failed to delete task:', error);
+        alert('Failed to delete task');
+      }
+    }
+  };
+
+  const handleMarkComplete = async () => {
+    try {
+      await todoService.updateTodo(id, { completed: true, status: 'completed' });
+      navigate('/');
+    } catch (error) {
+      console.error('Failed to mark complete:', error);
+      alert('Failed to mark task complete');
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
+      </div>
+    );
+  }
+
+  if (!task) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p className="text-gray-500">Task not found</p>
+      </div>
+    );
   }
 
   // const completedCount = selectedTask.checklist?.filter(item => item.completed).length || 0;
@@ -30,23 +79,20 @@ const TaskDetailPage = () => {
       {/* Header */}
       <div className="flex items-center justify-between mb-6 md:mb-8">
         <button
-          onClick={() => setCurrentView("home")}
+          onClick={() => navigate('/')}
           className="w-10 h-10 md:w-12 md:h-12 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-gray-50 transition-colors"
         >
           <ArrowLeft size={20} className="text-gray-600" />
         </button>
         <div className="flex items-center gap-2">
-          <button className="w-10 h-10 md:w-12 md:h-12 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-gray-50 transition-colors">
+          <button 
+            onClick={() => navigate(`/task-form?edit=${id}`)}
+            className="w-10 h-10 md:w-12 md:h-12 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-gray-50 transition-colors"
+          >
             <Edit2 size={18} className="text-gray-600" />
           </button>
           <button
-            onClick={() => {
-              if (window.confirm("Delete this task?")) {
-                const { deleteTask } = useStore.getState();
-                deleteTask(selectedTask.id);
-                setCurrentView("home");
-              }
-            }}
+            onClick={handleDelete}
             className="w-10 h-10 md:w-12 md:h-12 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-red-50 transition-colors"
           >
             <Trash2 size={18} className="text-red-500" />
@@ -59,9 +105,9 @@ const TaskDetailPage = () => {
         {/* Timer Display */}
         <div className="text-center mb-6 md:mb-8">
           <div className="text-6xl md:text-7xl font-bold text-gray-900 mb-4">
-            {selectedTask.timer
-              ? `${selectedTask.timer.hours}:${String(
-                  selectedTask.timer.minutes
+            {task.timer
+              ? `${task.timer.hours}:${String(
+                  task.timer.minutes
                 ).padStart(2, "0")}`
               : "00:00"}
           </div>
@@ -70,47 +116,47 @@ const TaskDetailPage = () => {
           <div className="flex items-center justify-center gap-3 mb-2">
             <div className="w-12 h-12 bg-red-100 rounded-2xl flex items-center justify-center">
               <TaskIcon
-                name={selectedTask.icon}
+                name={task.icon || 'FileText'}
                 size={24}
                 className="text-red-500"
               />
             </div>
             <h1 className="text-xl font-bold text-gray-900">
-              {selectedTask.title}
+              {task.title}
             </h1>
           </div>
 
           {/* Description */}
-          {selectedTask.description && (
+          {task.description && (
             <p className="text-sm text-gray-600 mb-4">
-              📋 {selectedTask.description}
+              📋 {task.description}
             </p>
           )}
 
           {/* Time Slot */}
-          {selectedTask.dueTime && (
-            <p className="text-sm text-gray-500 mb-2">{selectedTask.dueTime}</p>
+          {task.dueTime && (
+            <p className="text-sm text-gray-500 mb-2">{task.dueTime}</p>
           )}
 
           {/* Meeting Link */}
-          {selectedTask.meetingLink && (
+          {task.meetingLink && (
             <div className="inline-flex items-center gap-1 bg-white px-3 py-1 rounded-full shadow-sm mb-4">
               <div className="w-3 h-3 bg-green-100 rounded flex items-center justify-center">
                 <div className="w-1.5 h-1.5 bg-green-500 rounded"></div>
               </div>
               <span className="text-xs text-gray-700">
-                {selectedTask.meetingLink}
+                {task.meetingLink}
               </span>
               <span className="text-xs text-gray-400">↗</span>
             </div>
           )}
 
           {/* Warning */}
-          {selectedTask.warning && (
+          {task.warning && (
             <div className="bg-red-50 rounded-xl p-3 flex items-center gap-2 mb-6 max-w-xs mx-auto">
               <AlertCircle size={16} className="text-red-500" />
               <span className="text-sm text-red-600">
-                {selectedTask.warning}
+                {task.warning}
               </span>
             </div>
           )}
@@ -129,16 +175,15 @@ const TaskDetailPage = () => {
         </div>
 
         {/* Checklist */}
-        {selectedTask.checklist && selectedTask.checklist.length > 0 && (
+        {task.checklist && task.checklist.length > 0 && (
           <div className="mb-6">
             <h3 className="text-sm font-medium text-gray-500 mb-3 md:text-base">
               Checklist
             </h3>
             <div className="space-y-3">
-              {selectedTask.checklist.map((item) => (
+              {task.checklist.map((item) => (
                 <div
                   key={item.id}
-                  onClick={() => toggleChecklistItem(selectedTask.id, item.id)}
                   className="flex items-center gap-3 cursor-pointer"
                 >
                   <div
@@ -181,10 +226,7 @@ const TaskDetailPage = () => {
 
         {/* Mark Complete Button */}
         <button
-          onClick={() => {
-            markTaskComplete(selectedTask.id);
-            setCurrentView("home");
-          }}
+          onClick={handleMarkComplete}
           className="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-4 rounded-2xl shadow-lg transition-colors"
         >
           Mark Complete

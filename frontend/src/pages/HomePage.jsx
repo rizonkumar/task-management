@@ -11,7 +11,19 @@ const HomePage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadTodos();
+    let isMounted = true;
+    
+    const fetchData = async () => {
+      if (isMounted) {
+        await loadTodos();
+      }
+    };
+    
+    fetchData();
+    
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const loadTodos = async () => {
